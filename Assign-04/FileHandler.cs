@@ -1,26 +1,19 @@
-﻿/*
-FILE          : prgram.cs
-PROJECT       : Assignment 4
-PROGRAMMER    : Helly Shah (8958841)
-FIRST VERSION : November 5, 2024
-DESCRIPTION   : 
-*/
-
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Assignment4
 {
+
     public class FileHandler
     {
         private readonly string filePath;
         private readonly int targetSize;
         private const int TaskCount = 25;
         private CancellationTokenSource cts;
+        private readonly object fileLock = new object();
 
         public FileHandler(string filePath, int targetSize)
         {
@@ -33,13 +26,8 @@ namespace Assignment4
         {
             try
             {
-                // Monitor the file size in a separate task
                 var monitorTask = Task.Run(() => MonitorFileSize(cts.Token), cts.Token);
-
-                // Use Parallel.For to write random data
                 Parallel.For(0, TaskCount, new ParallelOptions { CancellationToken = cts.Token }, _ => WriteRandomData(cts.Token));
-
-                // Wait for the monitor task to complete
                 monitorTask.Wait();
             }
             catch (OperationCanceledException)
@@ -52,7 +40,16 @@ namespace Assignment4
             }
             finally
             {
+                // Print the final file size only once after all tasks have completed
+                long finalSize;
+                lock (fileLock)
+                {
+                    var fileInfo = new FileInfo(filePath);
+                    finalSize = fileInfo.Length;
+                }
+
                 Console.WriteLine("All tasks have completed.");
+                Console.WriteLine("Final file size: " + finalSize + " bytes");
                 cts.Dispose();
             }
         }
@@ -64,9 +61,16 @@ namespace Assignment4
             {
                 while (!token.IsCancellationRequested)
                 {
-                    var data = new string(Enumerable.Repeat(0, 36).Select(_ => (char)random.Next(32, 127)).ToArray());
-                    File.AppendAllText(filePath, data);
-                    Task.Delay(10).Wait(); // Use Wait instead of await
+                    var data = new string(Enumerable.Repeat(0, 36)
+                        .Select(_ => (char)random.Next(32, 127))
+                        .ToArray());
+
+                    lock (fileLock)
+                    {
+                        File.AppendAllText(filePath, data);
+                    }
+
+                    Task.Delay(10).Wait();
                 }
             }
             catch (IOException ioEx)
@@ -89,15 +93,21 @@ namespace Assignment4
             {
                 while (!token.IsCancellationRequested)
                 {
-                    Task.Delay(100).Wait(); // Use Wait instead of await
-                    var fileInfo = new FileInfo(filePath);
-                    var currentSize = fileInfo.Length;
+                    Task.Delay(100).Wait();
+                    long currentSize;
+
+                    lock (fileLock)
+                    {
+                        var fileInfo = new FileInfo(filePath);
+                        currentSize = fileInfo.Length;
+                    }
+
                     Console.WriteLine("Current file size: " + currentSize + " bytes");
 
                     if (currentSize >= targetSize)
                     {
                         Console.WriteLine("Target size reached. Final size: " + currentSize + " bytes");
-                        cts.Cancel(); // Request cancellation of tasks
+                        cts.Cancel();
                         break;
                     }
                 }

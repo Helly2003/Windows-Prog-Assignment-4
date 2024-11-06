@@ -1,0 +1,7 @@
+C:\Users\helly\OneDrive\Desktop\SEM 3\Windows prog\A-04\Assign-04\bin\Debug\Assign-04.exe.config
+C:\Users\helly\OneDrive\Desktop\SEM 3\Windows prog\A-04\Assign-04\bin\Debug\Assign-04.exe
+C:\Users\helly\OneDrive\Desktop\SEM 3\Windows prog\A-04\Assign-04\bin\Debug\Assign-04.pdb
+C:\Users\helly\OneDrive\Desktop\SEM 3\Windows prog\A-04\Assign-04\obj\Debug\Assign-04.csproj.AssemblyReference.cache
+C:\Users\helly\OneDrive\Desktop\SEM 3\Windows prog\A-04\Assign-04\obj\Debug\Assign-04.csproj.CoreCompileInputs.cache
+C:\Users\helly\OneDrive\Desktop\SEM 3\Windows prog\A-04\Assign-04\obj\Debug\Assign-04.exe
+C:\Users\helly\OneDrive\Desktop\SEM 3\Windows prog\A-04\Assign-04\obj\Debug\Assign-04.pdb
