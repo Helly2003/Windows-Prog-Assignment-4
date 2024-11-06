@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+FILE          : prgram.cs
+PROJECT       : Assignment 4
+PROGRAMMER    : Helly Shah (8958841)
+FIRST VERSION : November 5, 2024
+DESCRIPTION   : 
+*/
+
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
